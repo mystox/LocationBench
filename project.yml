@@ -1,0 +1,35 @@
+name: LocationBench
+options:
+  developmentLanguage: zh-Hans
+  deploymentTarget:
+    iOS: "27.0"
+targets:
+  LocationBench:
+    type: application
+    platform: iOS
+    sources:
+      - path: LocationBench
+        excludes:
+          - Info.plist
+      - path: THIRD_PARTY_NOTICES.txt
+        buildPhase: resources
+    dependencies:
+      - framework: Frameworks/IDevice.xcframework
+        embed: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.locationbench.iphone
+        INFOPLIST_FILE: LocationBench/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Automatic
+schemes:
+  LocationBench:
+    build:
+      targets:
+        LocationBench: all

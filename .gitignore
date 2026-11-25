@@ -1,0 +1,10 @@
+/.build/
+/build/
+/Frameworks/
+/LocationBench.xcodeproj/
+*.ipa
+*.mobiledevicepairing
+*.mobileprovision
+/rppairing*.plist
+/pairing*.plist
+.DS_Store
