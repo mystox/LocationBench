@@ -13,6 +13,8 @@ targets:
           - Info.plist
       - path: THIRD_PARTY_NOTICES.txt
         buildPhase: resources
+      - path: DeveloperImageFiles
+        buildPhase: resources
     dependencies:
       - framework: Frameworks/IDevice.xcframework
         embed: false

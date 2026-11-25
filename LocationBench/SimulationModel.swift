@@ -120,8 +120,8 @@ final class SimulationModel: ObservableObject {
 
         let needsImage = try await device.needsDeveloperImage()
         if needsImage {
-            message = "正在下载并校验开发者镜像…"
-            let assets = try await DeveloperImage.prepare()
+            message = "正在准备开发者镜像…"
+            let assets = try DeveloperImage.prepare()
             message = "正在安装开发者镜像…"
             try await device.installDeveloperImage(from: assets)
         }
