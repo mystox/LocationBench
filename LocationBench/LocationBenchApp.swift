@@ -55,7 +55,7 @@ private struct LocationView: View {
                     Text("使用定位前，打开开发者模式，连接 Wi-Fi 并在 LocalDevVPN 中开启隧道。")
                 }
 
-                Section("目标位置") {
+                Section {
                     MapReader { proxy in
                         Map(position: $mapPosition) {
                             if let picked {
@@ -99,6 +99,8 @@ private struct LocationView: View {
                         Task { await model.restore() }
                     }
                     .disabled(!actionsAvailable)
+                } header: {
+                    Text("目标位置")
                 } footer: {
                     Text("模拟位置生效时，「获取当前位置」返回的也是模拟点。")
                 }
