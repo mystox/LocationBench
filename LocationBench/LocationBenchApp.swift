@@ -16,6 +16,7 @@ private struct LocationView: View {
 
     @StateObject private var model = SimulationModel()
     @StateObject private var pairing = LocalPairing()
+    @StateObject private var currentLocation = CurrentLocation()
     @State private var latitude = ""
     @State private var longitude = ""
     @State private var importing = false
@@ -70,6 +71,18 @@ private struct LocationView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .listRowInsets(EdgeInsets())
 
+                    Button(action: fetchCurrentLocation) {
+                        if currentLocation.fetching {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                Text("正在获取当前位置…")
+                            }
+                        } else {
+                            Label("获取当前位置", systemImage: "location")
+                        }
+                    }
+                    .disabled(currentLocation.fetching)
+
                     LabeledContent("纬度") {
                         coordinateField("-90 至 90", value: $latitude, label: "纬度", field: .latitude)
                     }
@@ -86,6 +99,8 @@ private struct LocationView: View {
                         Task { await model.restore() }
                     }
                     .disabled(!actionsAvailable)
+                } footer: {
+                    Text("模拟位置生效时，「获取当前位置」返回的也是模拟点。")
                 }
 
                 Section("状态") {
@@ -99,15 +114,33 @@ private struct LocationView: View {
                             .textSelection(.enabled)
                         Button("关闭错误提示", action: model.dismissError)
                     }
+                    if let error = currentLocation.error {
+                        Text(error)
+                            .foregroundStyle(.red)
+                            .textSelection(.enabled)
+                    }
                 }
             }
             .navigationTitle("定位测试")
             .fileImporter(isPresented: $importing, allowedContentTypes: [.data], onCompletion: model.importPairing)
+            .onReceive(currentLocation.$coordinate) { coordinate in
+                guard let coordinate else { return }
+                pick(coordinate)
+                mapPosition = .region(MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                ))
+            }
         }
     }
 
     private var actionsAvailable: Bool {
         model.paired && !model.busy && !pairing.running && !requestingNotifications
+    }
+
+    private func fetchCurrentLocation() {
+        focusedField = nil
+        currentLocation.request()
     }
 
     private func pick(_ coordinate: CLLocationCoordinate2D) {

@@ -2,7 +2,7 @@
 
 个人使用的 iPhone 原生定位测试 App。目标系统为 iOS 27+，首测设备为 iOS 27.3。
 
-- 输入十进制度数，设置固定位置或恢复真实定位。
+- 输入十进制度数，或在地图上点选、读取当前位置，设置固定位置或恢复真实定位。
 - 支持本机六位码配对和导入 RPPairing 文件，配对凭据保存在设备 Keychain。
 - 通过 LocalDevVPN 连接本机开发者服务，开发者镜像内置于 App，连接后按需安装。
 
@@ -25,6 +25,7 @@
 ## 代码
 
 - `LocationBench/LocationBenchApp.swift` 是操作界面。
+- `LocationBench/CurrentLocation.swift` 读取设备当前位置。
 - `LocationBench/LocalPairing.swift` 和 `PairingStore.swift` 处理本机配对、导入和凭据保存。
 - `LocationBench/DeviceConnection.swift` 连接 DVT 定位服务并释放会话。
 - `LocationBench/DeveloperImage.swift` 提供内置开发者镜像。
