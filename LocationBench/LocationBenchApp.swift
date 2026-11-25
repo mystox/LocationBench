@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 import UniformTypeIdentifiers
 import UserNotifications
@@ -19,6 +20,11 @@ private struct LocationView: View {
     @State private var longitude = ""
     @State private var importing = false
     @State private var requestingNotifications = false
+    @State private var picked: CLLocationCoordinate2D?
+    @State private var mapPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 35, longitude: 105),
+                           span: MKCoordinateSpan(latitudeDelta: 45, longitudeDelta: 45))
+    )
     @FocusState private var focusedField: Field?
 
     var body: some View {
@@ -49,6 +55,21 @@ private struct LocationView: View {
                 }
 
                 Section("目标位置") {
+                    MapReader { proxy in
+                        Map(position: $mapPosition) {
+                            if let picked {
+                                Marker("模拟位置", coordinate: picked)
+                            }
+                        }
+                        .onTapGesture { point in
+                            guard let coordinate = proxy.convert(point, from: .local) else { return }
+                            pick(coordinate)
+                        }
+                    }
+                    .frame(height: 240)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .listRowInsets(EdgeInsets())
+
                     LabeledContent("纬度") {
                         coordinateField("-90 至 90", value: $latitude, label: "纬度", field: .latitude)
                     }
@@ -87,6 +108,13 @@ private struct LocationView: View {
 
     private var actionsAvailable: Bool {
         model.paired && !model.busy && !pairing.running && !requestingNotifications
+    }
+
+    private func pick(_ coordinate: CLLocationCoordinate2D) {
+        focusedField = nil
+        picked = coordinate
+        latitude = String(format: "%.6f", coordinate.latitude)
+        longitude = String(format: "%.6f", coordinate.longitude)
     }
 
     private func coordinateField(_ placeholder: String, value: Binding<String>, label: String, field: Field) -> some View {
