@@ -1,0 +1,26 @@
+name: 构建 iPhone IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: xcode-27
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: 编译并打包
+        run: bash scripts/build-ipa.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: 上传 IPA
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: LocationBench-unsigned
+          path: build/LocationBench.ipa
+          if-no-files-found: error
